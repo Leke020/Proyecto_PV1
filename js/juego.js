@@ -11,8 +11,10 @@ class Juego {
         this.boidsV2 = [];
         this.graphicsArray = [];
 
-        this.canvasWidth = window.innerWidth * 2;
-        this.canvasHeight = window.innerHeight * 2;
+        this.canvasWidth = window.innerWidth * 4;
+        this.canvasHeight = window.innerHeight * 4;
+
+        this.escala = 1;
 
         let promesa = this.app.init({ background: '#1099bb', resizeTo: window, height: this.canvasWidth, width: this.canvasHeight });
 
@@ -21,79 +23,78 @@ class Juego {
         
 
         promesa.then((e) => {
-            document.body.appendChild(this.app.canvas)
-            this.app.stage.addChild(this.playerContainer);
-            window.__PIXI_APP__ = this.app;
-            
-            //this.constroles();
-            this.constrolesV2();
-
-            this.app.ticker.add(() => {
-                //this.update();
-                this.player.update();
-                this.actualizarCamara();
-                //console.log(this.app.renderer.width / 2);
-            });
-            
-            this.cargarPlayer();
-            
-            this.cargarBoids();
-            this.moverBoids();
+            this.juegoListo();
             
             
             
         })
     }
 
-    update(){
+    juegoListo(){
+        this.contenedorPrincipal = new PIXI.Container();
+        this.contenedorPrincipal.name = "contenedorPrincipal";
+        this.app.stage.addChild(this.contenedorPrincipal);
+
+        document.body.appendChild(this.app.canvas)
+        this.app.stage.addChild(this.playerContainer);
+        window.__PIXI_APP__ = this.app;
         
+        // Update
+        this.app.ticker.add((e) => {
+            this.player.update();
+            //this.moverCamara();
+            
+            this.update(e)
+            //this.moverUI();
+            
+        });
+
+        this.constrolesV2();
+        this.cargarPlayer();
+        this.cargarBoids();
+        this.moverBoids();
+        //this.cargarCubo();
+        this.crearUI();
+        //this.ponerListeners();
+
+        
+    }
+
+
+    crearUI(){
+        this.ui = new PIXI.Container();
+        this.ui.name = "UI";
+        this.app.stage.addChild(this.ui);
+
+        this.uiVida();
+
+        //this.ui.pivot.x = this.ui.x;
+        //this.ui.pivot.x = this.ui.y;
+        
+    }
+
+    uiVida(){
+        this.barraVida = new PIXI.Graphics();
+        this.barraVida.name = "BarraVida";
+        this.barraVida.beginFill(0xFF0000);
+        this.barraVida.drawRect(20, 20, 500, 20); // (100, 100) es la posición y (200, 150) es el tamaño
+        this.barraVida.endFill();
+
+        this.ui.addChild(this.barraVida);
+    }
+
+
+    moverUI(){
+        this.ui.x = 
+            this.playerContainer.x - window.innerWidth / 2 ;
+        this.ui.y = 
+            this.playerContainer.y - window.innerHeight / 2 / this.escala;
     }
 
     
-    /*
-    constroles(){
-        //if(!this.playerV3[0].listo) return
-        let speed = 5
-        window.addEventListener('keydown', (event) => {
-            this.keys[event.code] = true;
-        });
-        
-        window.addEventListener('keyup', (event) => {
-            this.keys[event.code] = false;
-
-            if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
-                this.players[0].dejarDeCorrer(); // Acción para dejar de correr
-            }
-        });
-
-        this.app.ticker.add(() => {
-           for (const key in this.keys) {
-                if (this.keys[key]) {
-                    switch (key) {
-                        case 'KeyW':
-                            this.players[0].moverArriba(); // Mover hacia arriba
-                            break;
-                        case 'KeyS':
-                            this.players[0].moverAbajo(); // Mover hacia abajo
-                            break;
-                        case 'KeyA':
-                            this.players[0].moverIzquierda(); // Mover hacia la izquierda
-                            break;
-                        case 'KeyD':
-                            this.players[0].moverDerecha(); // Mover hacia la derecha
-                            break;
-                        case 'ShiftLeft':
-                            this.players[0].correr();
-                            break;
-                    }
-                }
-           }
-        });
-    }
-    */
-
+    
+    // ----- Controles ------
     constrolesV2(){
-        //if(!this.playerV3[0].listo) return
         let speed = 5
         window.addEventListener('keydown', (event) => {
             this.keys[event.code] = true;
@@ -136,11 +137,26 @@ class Juego {
         //this.player = new Player(400, 300, this.app, this);
         this.player = new Player(window.innerWidth / 2, window.innerHeight / 2, this.app, this);
     }
+    cargarCubo(){
+        this.cubo = new PIXI.Graphics();
+        this.cubo.name = "CUBO"
+        this.cubo.beginFill(0xFF0000);
+        this.cubo.drawRect(20, 20, 500, 20); // (100, 100) es la posición y (200, 150) es el tamaño
+        this.cubo.endFill();
+
+        this.contenedorPrincipal.addChild(this.cubo);
+    }
+    /*
     cargarContainer(){
         //this.app.stage.addChild(this.playerContainer);
         this.playerContainer.addChild(this.player);
+        this.contenedorPrincipal.addChild(this.playerContainer);
 
     }
+    */
+    
+
+
     actualizarCamara(){
         let lerpFactor = 0.05;
         
@@ -173,34 +189,25 @@ class Juego {
             clampedY,
             lerpFactor
         );
-
-        const fixedObject = this.player.barraVida; // Asegúrate de tener este objeto definido
+        /*
+        const fixedObject = this.ui; // Asegúrate de tener este objeto definido
         fixedObject.x = this.app.stage.position.x + 1; // Margen deseado desde la esquina
         fixedObject.y = this.app.stage.position.y + 1; // Margen deseado desde la esquina
-        
+        */
         
     }
-    /*
-    cargarBoids(){
-        for (let i = 0; i < 10; i++) {
-            this.boids.push(new Boid(Math.random() * this.app.view.width, Math.random() * this.app.view.height, this.app));
-        }
+    moverCamara(){
+        this.contenedorPrincipal.x = - this.player.playerContainer.x;
+        this.contenedorPrincipal.y = - this.player.playerContainer.y;
     }
 
-    moverBoids(){
-        this.app.ticker.add(() => {
-            this.boids.forEach(boid => {
-                boid.update(this.boids);
-                // Dibuja el boid
-                const graphics = new PIXI.Graphics();
-                graphics.beginFill(0x66CCFF);
-                graphics.drawCircle(boid.position.x, boid.position.y, boid.size);
-                graphics.endFill();
-                this.app.stage.addChild(graphics);
-            });
-        });
+    update(e){
+        this.objetoTickDePixi = e;
+
+        this.moverCamara();
+        //this.actualizarCamara();
     }
-    */
+
     
     cargarBoids(){
         for (let i = 0; i < 10; i++) {
@@ -211,7 +218,8 @@ class Juego {
             graphics.beginFill(0x66CCFF);
             graphics.drawCircle(0, 0, boid.size); // Dibuja en (0, 0)
             graphics.endFill();
-            this.app.stage.addChild(graphics);
+            //this.app.stage.addChild(graphics);
+            this.contenedorPrincipal.addChild(graphics);
             this.graphicsArray.push(graphics);
         }
     }

@@ -15,25 +15,16 @@ class Player {
 
         this.listo = false;
         
-        
-        //this.setUp();
         this.crearPlayer();
-        this.barraDeVida();
         this.update();
-        this.backGroundCont()
+        
         
     }
 
-    setUp(){
-        this.app.stage.addChild(this.hudContainer);
-        this.hudContainer.innerWidth = window.innerWidth;
-        this.hudContainer.innerHeight = window.innerHeight;
-        
-    }
+    
 
     crearPlayer(){
-        
-
+    
         // Configurar el color y la transparencia
         this.player.beginFill(0xFFFFFF, 1); // Color rojo con opacidad total
         this.player.drawCircle(this.x, this.y, 50); // Dibuja un círculo en (400, 300) con radio 50
@@ -44,6 +35,7 @@ class Player {
         this.player.y = this.y;
         this.playerContainer.addChild(this.player)
         this.app.stage.addChild(this.playerContainer);
+        this.juego.contenedorPrincipal.addChild(this.playerContainer);
         this.listo = true;
         //this.player = graphics;
     }
@@ -74,44 +66,19 @@ class Player {
     dejarDeCorrer(){
         this.speed = 5
     }
-    // HUD
-
-    barraDeVida(){
-        this.barraVida.beginFill(0xFF0000); // Color rojo
-        this.barraVida.drawRect(0, 0, 400, 30); // x, y, ancho, alto
-        this.barraVida.endFill();
-        this.app.stage.addChild(this.barraVida);
-        this.playerContainer.addChild(this.barraVida);
-        //this.hudContainer.addChild(this.barraVida);
-        
-        //this.hudContainer.background()
-    }
-
-    backGroundCont(){
-        const fondo = new PIXI.Graphics();
-        fondo.beginFill(0xFF0000); // Color rojo
-        fondo.drawRect(100, 100, 500, 600); // Ajusta el tamaño según necesites
-        fondo.endFill();
-        //this.hudContainer.addChild(fondo);
-    }
-    
-    mantenerElemento(){
-        this.barraVida.x = window.innerWidth - 70;
-        this.barraVida.y = 10;
-    }
 
     update(){
-        console.log("test");
+        //console.log("test");
         //console.log(this.app.renderer.height)
         //this.mantenerElemento()
-        console.log(this.juego.canvasHeight);
-        console.log(this.playerPosition.x)
+        /*
         if (this.playerPosition.x < 0 || this.playerPosition.x > this.app.view.width) {
             this.speed = 0;
         }
         if (this.playerPosition.y < 0 || this.playerPosition.y > this.app.view.height) {
             this.speed = 0;
         }
+        */
     }
     
 }
