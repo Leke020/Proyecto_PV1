@@ -6,7 +6,12 @@
     <title>Document</title>
     <script src="js/pixi.min.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/grid.js"></script>
+    <script src="js/celda.js"></script>
+    <script src="js/entidad.js"></script>
     <script src="js/boids.js"></script>
+
+    <script src="js/depredador.js"></script>
     <script src="js/player.js"></script>
 
     <script src="js/juego.js"></script>
@@ -15,6 +20,12 @@
 <body>
     <script>
         let juego = new Juego()
+
+        for (let i = 0; i < 50; i++){
+            juego.agregarDepredador(Math.random() * window.innerWidth, Math.random() * window.innerHeight)
+        }
+
+        
     </script>
 </body>
 </html>

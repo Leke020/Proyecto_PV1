@@ -11,10 +11,15 @@ class Juego {
         this.boidsV2 = [];
         this.graphicsArray = [];
 
+        this.entidades = [];
+        this.depredadores = [];
+
         this.canvasWidth = window.innerWidth * 4;
         this.canvasHeight = window.innerHeight * 4;
 
         this.escala = 1;
+
+        this.tamanoCelda = 100;
 
         let promesa = this.app.init({ background: '#1099bb', resizeTo: window, height: this.canvasWidth, width: this.canvasHeight });
 
@@ -24,9 +29,8 @@ class Juego {
 
         promesa.then((e) => {
             this.juegoListo();
-            
-            
-            
+            this.cargarBoids();
+            this.moverBoids();
         })
     }
 
@@ -39,6 +43,8 @@ class Juego {
         this.app.stage.addChild(this.playerContainer);
         window.__PIXI_APP__ = this.app;
         
+        this.grid = new Grid(this, this.tamanoCelda);
+
         // Update
         this.app.ticker.add((e) => {
             this.player.update();
@@ -49,17 +55,44 @@ class Juego {
             
         });
 
+        //this.cargarFondoV2();
+        
         this.constrolesV2();
         this.cargarPlayer();
-        this.cargarBoids();
-        this.moverBoids();
-        //this.cargarCubo();
+        //this.cargarBoids();
+        //this.moverBoids();
+        this.cargarCubo();
         this.crearUI();
+        
         //this.ponerListeners();
-
+        
         
     }
 
+    
+
+    cargarFondo(){
+        PIXI.Assets.load("../Assets/img/fondo.jpg").then((textura) => {
+            this.fondo = new PIXI.Sprite(textura);
+
+            this.fondo.width = app.screen.width;
+            this.fondo.height = app.screen.height;
+
+            this.app.stage.addChild(fondo);
+        }).catch((error) => {
+            console.error("Error al cargar la imagen de fondo:", error);
+        });
+        
+    }
+
+    cargarFondoV2(){
+        PIXI.Texture.fromURL("./Assets/img/fondo.jpg").then((patternTuexture) => {
+            this.backgroundSprite = new PIXI.TilingSprite(patternTuexture, 5000, 5000);
+
+            this.app.stage.addChild(this.backgroundSprite);
+        });
+        
+    }
 
     crearUI(){
         this.ui = new PIXI.Container();
@@ -70,7 +103,7 @@ class Juego {
 
         //this.ui.pivot.x = this.ui.x;
         //this.ui.pivot.x = this.ui.y;
-        
+         
     }
 
     uiVida(){
@@ -107,7 +140,7 @@ class Juego {
                 this.player.dejarDeCorrer(); // Acción para dejar de correr
             }
         });
-
+        
         this.app.ticker.add(() => {
            for (const key in this.keys) {
                 if (this.keys[key]) {
@@ -123,6 +156,7 @@ class Juego {
                             break;
                         case 'KeyD':
                             this.player.moverDerecha(); // Mover hacia la derecha
+                            
                             break;
                         case 'ShiftLeft':
                             this.player.correr();
@@ -137,11 +171,14 @@ class Juego {
         //this.player = new Player(400, 300, this.app, this);
         this.player = new Player(window.innerWidth / 2, window.innerHeight / 2, this.app, this);
     }
+
+    
+
     cargarCubo(){
         this.cubo = new PIXI.Graphics();
         this.cubo.name = "CUBO"
         this.cubo.beginFill(0xFF0000);
-        this.cubo.drawRect(20, 20, 500, 20); // (100, 100) es la posición y (200, 150) es el tamaño
+        this.cubo.drawRect(2000, 1000, 500, 500); // (100, 100) es la posición y (200, 150) es el tamaño
         this.cubo.endFill();
 
         this.contenedorPrincipal.addChild(this.cubo);
@@ -164,8 +201,8 @@ class Juego {
         const playerX = this.player.playerContainer.x;
         const playerY = this.player.playerContainer.y;
 
-        const halfScreenWidth = this.app.screen.width / 5;
-        const halfScreenHeight = this.app.screen.height / 5;
+        const halfScreenWidth = this.app.screen.width / 2;
+        const halfScreenHeight = this.app.screen.height / 2;
         
         const targetX = halfScreenWidth - playerX;
         const targetY = halfScreenHeight - playerY;
@@ -204,13 +241,31 @@ class Juego {
     update(e){
         this.objetoTickDePixi = e;
 
-        this.moverCamara();
-        //this.actualizarCamara();
+        //this.moverCamara();
+        //console.log(this.player.playerContainer.x);
+        this.actualizarCamara();
+
+        this.grid.update();
+        this.player.update();
+        
+
+        for (let entidad of this.entidades){
+            entidad.update();
+            entidad.render();
+        }
+
+        
+    }
+
+    agregarDepredador(x,y){
+        let depredador = new Depredador(x, y, this)
+        this.entidades.push(depredador);
+        this.depredadores.push(depredador);
     }
 
     
     cargarBoids(){
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 2; i++) {
             const boid = new Boid(Math.random() * this.app.view.width, Math.random() * this.app.view.height, this.app);
             this.boids.push(boid);
         
@@ -242,4 +297,5 @@ class Juego {
             flock.push(boid);
         }
     }
+    
 }

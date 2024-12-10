@@ -2,7 +2,8 @@ class Player {
     constructor(x, y, app, juego) {
         this.player = new PIXI.Graphics();
         this.playerContainer = new PIXI.Container();
-        this.playerPosition = new PIXI.Point(x, y);
+        this.playerContainer.name = "PlayerContainer";
+        //this.playerPosition = new PIXI.Point(x, y);
         this.hudContainer = new PIXI.Container();
         //this.playerContainer
         this.barraVida = new PIXI.Graphics();
@@ -26,16 +27,22 @@ class Player {
     crearPlayer(){
     
         // Configurar el color y la transparencia
+        this.player.name = "Player";
         this.player.beginFill(0xFFFFFF, 1); // Color rojo con opacidad total
-        this.player.drawCircle(this.x, this.y, 50); // Dibuja un círculo en (400, 300) con radio 50
+        this.player.drawCircle(0, 0, 10); // Dibuja un círculo en (400, 300) con radio 50
         this.player.endFill();
-        this.player.pivot.set(this.x, this.y)
+        //this.player.pivot.set(this.x, this.y)
         // Añadir el gráfico al escenario
-        this.player.x = this.x;
-        this.player.y = this.y;
         this.playerContainer.addChild(this.player)
-        this.app.stage.addChild(this.playerContainer);
+        //this.app.stage.addChild(this.playerContainer);
+        //this.player.x = this.x;
+        //this.player.y = this.y;
+        
+        this.playerContainer.x = this.x;
+        this.playerContainer.y = this.y;
+        
         this.juego.contenedorPrincipal.addChild(this.playerContainer);
+        //this.playerContainer.pivot.set(this.playerContainer.width /2 , this.playerContainer.height /2);
         this.listo = true;
         //this.player = graphics;
     }
@@ -68,6 +75,10 @@ class Player {
     }
 
     update(){
+        this.position = {x: this.playerContainer.x, y: this.playerContainer.y};
+        
+
+        //console.log(this.position);
         //console.log("test");
         //console.log(this.app.renderer.height)
         //this.mantenerElemento()

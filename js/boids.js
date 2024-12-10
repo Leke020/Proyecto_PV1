@@ -27,12 +27,7 @@ class Boid {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    distance(pointA, pointB) {
-        const dx = pointA.x - pointB.x;
-        const dy = pointA.y - pointB.y;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
-
+    
     flock(boids) {
         // Implementa separación, alineación y cohesión
         // Ejemplo de separación:
